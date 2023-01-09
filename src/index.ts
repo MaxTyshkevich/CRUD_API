@@ -13,13 +13,13 @@ const PORT = process.env.PORT || 3000;
 
 let db: User[] = [
   {
-    id: uuidv4(),
+    id: '90447443-599a-41f2-a779-6fb64929db4c',
     username: 'Alex',
     age: 28,
     hobbies: ['eat', 'sleep'],
   },
   {
-    id: uuidv4(),
+    id: 'f34ccebe-8fbc-476c-981d-e58c3a0bb424',
     username: 'Max',
     age: 25,
     hobbies: ['watch tv'],
@@ -37,12 +37,12 @@ const getUser = (
 ) => {
   if (id && !validate(id)) {
     res.statusCode = 400;
-    return res.end(`{"error": "userId is invalid"}`);
+    return res.end('Id is invalid');
   }
 
   const user = db.filter((elem) => elem.id === id);
 
-  if (user) {
+  if (user.length) {
     res.statusCode = 200;
     res.end(JSON.stringify(user));
   } else {
@@ -71,22 +71,24 @@ const updateUser = (
   id: string,
   newUser: User
 ) => {
-  if (isValidNewUser(newUser)) {
-    const findUser = db.filter((item) => item.id === id);
-    if (findUser) {
-      let updateUser;
-      db.map((item) => {
-        if (item.id === id) {
-          updateUser = { ...item, newUser };
-          return updateUser;
-        }
-        return item;
-      });
-    } else {
-    }
+  if (id && !validate(id)) {
+    res.statusCode = 400;
+    return res.end('Id is invalid');
+  }
 
-    res.statusCode = 201;
-    res.end(JSON.stringify(newUser));
+  const index = db.findIndex((user) => {
+    return user.id === id;
+  });
+
+  if (index === -1) {
+    res.statusCode = 404;
+    res.end(`user with id:${id}, doesn't exist`);
+  } else {
+    const updateUser: User = { ...newUser, id: db[index].id };
+    db[index] = updateUser;
+
+    res.statusCode = 200;
+    res.end(JSON.stringify(updateUser));
   }
 };
 
@@ -96,7 +98,7 @@ const deleteUser = (
 ) => {
   if (id && !validate(id)) {
     res.statusCode = 400;
-    return res.end(`{"error": "userId is invalid"}`);
+    return res.end('userId is invalid');
   }
 
   const newDb = db.filter((elem) => elem.id !== id);
@@ -170,16 +172,13 @@ const server = http.createServer(async (req, res) => {
 
         default:
           res.statusCode = 404;
-          res.end(`bed request =(`);
+          res.setHeader('Content-Type', 'application/json');
+          res.end('Route not found');
       }
     } catch (error: any) {
-      if (error.message == 'bed request =(') {
-        console.log(error.message);
-        res.end(`bed request =(`);
-      } else {
-        res.statusCode = 500;
-        res.end(`Errors on the server side`);
-      }
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end('Internal Server Error');
     }
   }
 });
