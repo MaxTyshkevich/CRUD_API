@@ -2,7 +2,7 @@ import http from 'node:http';
 import { v4 as uuidv4, validate } from 'uuid';
 
 import { User } from './type';
-import { isValidNewUser, isValidUpdate } from './utils';
+import { isValidNewUser, isValidUpdate } from './utils.js';
 
 let db: User[] = [
   {

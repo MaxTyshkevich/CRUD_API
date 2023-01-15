@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import http from 'node:http';
 import cluster from 'node:cluster';
 import { cpus } from 'node:os';
-import { HandlerServer } from './server';
+import { HandlerServer } from './server.js';
 
 dotenv.config();
 
