@@ -74,7 +74,7 @@ export const updateUser = async (
   const index = db.findIndex((user) => {
     return user.id === id;
   });
-  console.log(index);
+
   if (index === -1) {
     res.statusCode = 404;
     res.end(`user with id:${id}, doesn't exist`);
@@ -84,7 +84,7 @@ export const updateUser = async (
     if (isValidUpdate(newUser)) {
       const updateUser: User = { ...db[index], ...newUser };
       db[index] = updateUser;
-      console.log(updateUser);
+
       res.statusCode = 200;
       res.end(JSON.stringify(updateUser));
     } else {

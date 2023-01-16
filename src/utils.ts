@@ -39,12 +39,23 @@ export function isValidUpdate(userUpdete: User) {
 
   for (let i = 0; i < AllProps; i += 1) {
     let key = parseUserUpdete[i][0];
-    let typeValue = getType(parseUserUpdete[i][1]);
+    let value = parseUserUpdete[i][1];
+    let typeValue = getType(value);
 
     const validPropIndex =
-      VALID_PROPERTIES.findIndex(
-        ([validKey, validType]) => validKey === key && validType === typeValue
-      ) + 1;
+      VALID_PROPERTIES.findIndex(([validKey, validType]) => {
+        if (
+          Array.isArray(value) &&
+          value.length &&
+          (parseUserUpdete[i][1] as any[]).every(
+            (item: any) => typeof item !== 'string'
+          )
+        ) {
+          return false;
+        }
+
+        return validKey === key && validType === typeValue;
+      }) + 1;
 
     if (validPropIndex) {
       count += 1;
